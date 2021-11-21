@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TrackMonster</string>
+    <string name="app_name">TrackMonster Editor</string>
     <string name="camera_permission_granted">Permission granted</string>
     <string name="camera_permission_denied">Permission denied</string>
     <string name="settings">Settings</string>
