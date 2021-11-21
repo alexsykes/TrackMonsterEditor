@@ -596,7 +596,7 @@ public class MainActivity extends AppCompatActivity
         // Call another activity here and pass some arguments to it.
         Intent intent = new Intent(this, TrackDialogActivity.class);
         intent.putExtra("trackid", trackid);
-        intent.putExtra("task", "update");
+        intent.putExtra("mapType", mapType);
         startActivity(intent);
         Log.i(TAG, "onClickCalled: ");
     }

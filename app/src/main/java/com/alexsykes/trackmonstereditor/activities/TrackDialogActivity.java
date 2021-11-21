@@ -41,9 +41,8 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
     // Request code for creating a PDF document.
     private static final int CREATE_FILE = 1;
     private static final int PICK_PDF_FILE = 2;
-    File exportDir = new File(Environment.getExternalStoragePublicDirectory("Documents/Scoremonster"), "");
-
     private static final String TAG = "Info";
+    File exportDir = new File(Environment.getExternalStoragePublicDirectory("Documents/Scoremonster"), "");
     TextInputLayout nameTextInputLayout;
     TextInputLayout descriptionTextInputLayout;
     CheckBox isVisibleCheckBox;
@@ -51,7 +50,8 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
     RadioGroup trackStyleGroup;
     RadioButton undefinedButton, trackButton, roadButton, majorRoadButton;
     String name;
-    String task;
+    int mapType;
+
     String style;
     String trackDescription;
     int trackID;
@@ -59,6 +59,8 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
     Intent intent;
     SharedPreferences prefs;
     TrackData trackData;
+    Polyline polyline;
+    PolylineOptions polylineOptions;
 
     private GoogleMap map;
 
@@ -84,35 +86,33 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
         trackDbHelper = new TrackDbHelper(this);
         intent = getIntent();
         trackID = Integer.parseInt(intent.getExtras().getString("trackid", "1"));
-        task = intent.getExtras().getString("task");
+        mapType = intent.getExtras().getInt("mapType");
 
         // Set initial values
-        if (task.equals("update")) {
-            trackData = trackDbHelper.getTrackData(trackID);
+        trackData = trackDbHelper.getTrackData(trackID);
 
-            nameTextInputLayout.getEditText().setText(trackData.getName());
-            descriptionTextInputLayout.getEditText().setText(trackData.getDescription());
-            boolean isVisible = trackData.isVisible();
-            boolean isCurrent = trackData.isCurrent();
-            isVisibleCheckBox.setChecked(isVisible);
-            isCurrentCheckBox.setChecked(isCurrent);
-            style = trackData.getStyle();
+        nameTextInputLayout.getEditText().setText(trackData.getName());
+        descriptionTextInputLayout.getEditText().setText(trackData.getDescription());
+        boolean isVisible = trackData.isVisible();
+        boolean isCurrent = trackData.isCurrent();
+        isVisibleCheckBox.setChecked(isVisible);
+        isCurrentCheckBox.setChecked(isCurrent);
+        style = trackData.getStyle();
 
-            switch (style) {
-                case "Track":
-                    trackButton.setChecked(true);
-                    break;
-                case "Road":
-                    roadButton.setChecked(true);
-                    break;
-                case "Major road":
-                    majorRoadButton.setChecked(true);
-                    break;
-                case "Undefined":
-                    undefinedButton.setChecked(true);
-                    break;
-                default:
-            }
+        switch (style) {
+            case "Track":
+                trackButton.setChecked(true);
+                break;
+            case "Road":
+                roadButton.setChecked(true);
+                break;
+            case "Major road":
+                majorRoadButton.setChecked(true);
+                break;
+            case "Undefined":
+                undefinedButton.setChecked(true);
+                break;
+            default:
         }
 
         // Add listeners for changes
@@ -159,13 +159,40 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
         RadioButton selected = trackStyleGroup.findViewById(radioButtonID);
         String style = selected.getText().toString();
 
-        if (task.equals("new")) {
-            trackID = trackDbHelper.insertNewTrack(isCurrent, name, trackDescription, isVisible, style);
-            task = "update";
-        } else if (task.equals("update")) {
-            trackDbHelper.updateTrack(trackID, name, trackDescription, isVisible, isCurrent, style);
-        }
+        trackDbHelper.updateTrack(trackID, name, trackDescription, isVisible, isCurrent, style);
+
+        updateTrack();
         trackDbHelper.close();
+    }
+
+    private void updateTrack() {
+        final int COLOR_DARK_GREEN_ARGB = 0xff388E3C;
+        final int COLOR_LIGHT_GREEN_ARGB = 0xff81C784;
+        final int COLOR_DARK_ORANGE_ARGB = 0xffF57F17;
+        final int COLOR_LIGHT_ORANGE_ARGB = 0xffF9A825;
+
+        int strokeWidth = 5;
+        int strokeColour = COLOR_DARK_GREEN_ARGB;
+
+        // polyline = map.addPolyline(polylineOptions);
+        switch (style) {
+            case "Undefined":
+                strokeColour = COLOR_LIGHT_GREEN_ARGB;
+                break;
+            case "Track":
+                strokeColour = COLOR_DARK_GREEN_ARGB;
+                strokeWidth = 10;
+                break;
+            case "Road":
+                strokeColour = COLOR_LIGHT_ORANGE_ARGB;
+                break;
+            case "Major road":
+                strokeColour = COLOR_DARK_ORANGE_ARGB;
+                strokeWidth = 10;
+                break;
+        }
+        polyline.setColor(strokeColour);
+        polyline.setWidth(strokeWidth);
     }
 
     @Override
@@ -182,12 +209,8 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
         uiSettings.setCompassEnabled(true);
         uiSettings.setAllGesturesEnabled(true);
         uiSettings.setMapToolbarEnabled(true);
-        map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-
-        if (task.equals("update")) {
-            // Display track on map
-            displayTrack();
-        }
+        map.setMapType(mapType);
+        displayTrack();
     }
 
     @Override
@@ -203,14 +226,12 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
 
     private void emailTrackData() {
         trackDataToKML(trackData);
-       // openFile();
+        // openFile();
     }
 
     private void saveTrackData() {
         String filename = "trackdata.kml";
         trackDataToKML(trackData);
-
-        //createFile(filename);
     }
 
     private void createFile(String filename) {
@@ -252,12 +273,11 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
 
         LatLngBounds latLngBounds = trackData.getLatLngBounds();
         ArrayList<LatLng> latLngs = trackData.getLatLngs();
-        PolylineOptions polylineOptions = new PolylineOptions();
+        polylineOptions = new PolylineOptions();
         // Create polyline options with existing LatLng ArrayList
         polylineOptions.addAll(latLngs);
 
-
-        Polyline polyline = map.addPolyline(polylineOptions);
+        polyline = map.addPolyline(polylineOptions);
         switch (style) {
             case "Undefined":
                 strokeColour = COLOR_LIGHT_GREEN_ARGB;
