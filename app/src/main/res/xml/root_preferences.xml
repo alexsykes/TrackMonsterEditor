@@ -1,0 +1,34 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="Personal details">
+
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="name"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Name"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="email"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Email"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Track settings">
+
+<!--        <SwitchPreference
+            android:defaultValue="false"
+            android:key="useGPSonly"
+            android:title="GPS only" />-->
+        <ListPreference
+            android:entries="@array/sample_rate_entries"
+            android:entryValues="@array/sample_rate_values"
+            android:defaultValue="30"
+            android:key="intervalString"
+            android:title="@string/sample_rate"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+</PreferenceScreen>

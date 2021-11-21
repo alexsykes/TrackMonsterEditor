@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.alexsykes.trackmonstereditor">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <supports-screens
+        android:largeScreens="true"
+        android:normalScreens="false"
+        android:smallScreens="false"
+        android:xlargeScreens="true" />
+
+
+    <application
+        android:name="com.alexsykes.trackmonstereditor.TrackMonster"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.TrackMonster">
+        <activity
+            android:name="com.alexsykes.trackmonstereditor.activities.TrackDialogActivity"
+            android:parentActivityName="com.alexsykes.trackmonstereditor.activities.TrackListActivity"
+            android:label="@string/track_details"
+            android:exported="false" />
+        <activity
+            android:name="com.alexsykes.trackmonstereditor.activities.TrackListActivity"
+            android:exported="false"
+            android:label="@string/title_activity_tracklist"
+            android:parentActivityName="com.alexsykes.trackmonstereditor.activities.MainActivity" />
+        <activity
+            android:name="com.alexsykes.trackmonstereditor.activities.SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="landscape"
+            android:parentActivityName="com.alexsykes.trackmonstereditor.activities.MainActivity" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name="com.alexsykes.trackmonstereditor.activities.MainActivity"
+            android:screenOrientation="landscape"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
