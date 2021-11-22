@@ -42,6 +42,10 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
     private static final int CREATE_FILE = 1;
     private static final int PICK_PDF_FILE = 2;
     private static final String TAG = "Info";
+    final int COLOR_DARK_GREEN_ARGB = 0xff388E3C;
+    final int COLOR_LIGHT_GREEN_ARGB = 0xff81C784;
+    final int COLOR_DARK_ORANGE_ARGB = 0xffF57F17;
+    final int COLOR_LIGHT_ORANGE_ARGB = 0xffF9A825;
     File exportDir = new File(Environment.getExternalStoragePublicDirectory("Documents/Scoremonster"), "");
     TextInputLayout nameTextInputLayout;
     TextInputLayout descriptionTextInputLayout;
@@ -81,6 +85,8 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
         trackButton = findViewById(R.id.trackButton);
         roadButton = findViewById(R.id.roadButton);
         majorRoadButton = findViewById(R.id.majorRoadButton);
+
+        polylineOptions = new PolylineOptions();
 
         // Get data
         trackDbHelper = new TrackDbHelper(this);
@@ -157,42 +163,12 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
 
         int radioButtonID = trackStyleGroup.getCheckedRadioButtonId();
         RadioButton selected = trackStyleGroup.findViewById(radioButtonID);
-        String style = selected.getText().toString();
+        style = selected.getText().toString();
 
         trackDbHelper.updateTrack(trackID, name, trackDescription, isVisible, isCurrent, style);
 
         updateTrack();
         trackDbHelper.close();
-    }
-
-    private void updateTrack() {
-        final int COLOR_DARK_GREEN_ARGB = 0xff388E3C;
-        final int COLOR_LIGHT_GREEN_ARGB = 0xff81C784;
-        final int COLOR_DARK_ORANGE_ARGB = 0xffF57F17;
-        final int COLOR_LIGHT_ORANGE_ARGB = 0xffF9A825;
-
-        int strokeWidth = 5;
-        int strokeColour = COLOR_DARK_GREEN_ARGB;
-
-        // polyline = map.addPolyline(polylineOptions);
-        switch (style) {
-            case "Undefined":
-                strokeColour = COLOR_LIGHT_GREEN_ARGB;
-                break;
-            case "Track":
-                strokeColour = COLOR_DARK_GREEN_ARGB;
-                strokeWidth = 10;
-                break;
-            case "Road":
-                strokeColour = COLOR_LIGHT_ORANGE_ARGB;
-                break;
-            case "Major road":
-                strokeColour = COLOR_DARK_ORANGE_ARGB;
-                strokeWidth = 10;
-                break;
-        }
-        polyline.setColor(strokeColour);
-        polyline.setWidth(strokeWidth);
     }
 
     @Override
@@ -263,17 +239,12 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
     }
 
     private void displayTrack() {
-        final int COLOR_DARK_GREEN_ARGB = 0xff388E3C;
-        final int COLOR_LIGHT_GREEN_ARGB = 0xff81C784;
-        final int COLOR_DARK_ORANGE_ARGB = 0xffF57F17;
-        final int COLOR_LIGHT_ORANGE_ARGB = 0xffF9A825;
 
-        int strokeWidth = 5;
+        int strokeWidth = 4;
         int strokeColour = COLOR_DARK_GREEN_ARGB;
 
         LatLngBounds latLngBounds = trackData.getLatLngBounds();
         ArrayList<LatLng> latLngs = trackData.getLatLngs();
-        polylineOptions = new PolylineOptions();
         // Create polyline options with existing LatLng ArrayList
         polylineOptions.addAll(latLngs);
 
@@ -284,20 +255,46 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
                 break;
             case "Track":
                 strokeColour = COLOR_DARK_GREEN_ARGB;
-                strokeWidth = 10;
+                strokeWidth = 6;
                 break;
             case "Road":
                 strokeColour = COLOR_LIGHT_ORANGE_ARGB;
                 break;
             case "Major road":
                 strokeColour = COLOR_DARK_ORANGE_ARGB;
-                strokeWidth = 10;
+                strokeWidth = 6;
                 break;
         }
         polyline.setColor(strokeColour);
         polyline.setWidth(strokeWidth);
 
         map.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 1000, 1000, 3));
+    }
+
+    private void updateTrack() {
+        map.clear();
+        int strokeWidth = 4;
+        int strokeColour = COLOR_DARK_GREEN_ARGB;
+
+        polyline = map.addPolyline(polylineOptions);
+        switch (style) {
+            case "Undefined":
+                strokeColour = COLOR_LIGHT_GREEN_ARGB;
+                break;
+            case "Track":
+                strokeColour = COLOR_DARK_GREEN_ARGB;
+                strokeWidth = 6;
+                break;
+            case "Road":
+                strokeColour = COLOR_LIGHT_ORANGE_ARGB;
+                break;
+            case "Major road":
+                strokeColour = COLOR_DARK_ORANGE_ARGB;
+                strokeWidth = 6;
+                break;
+        }
+        polyline.setColor(strokeColour);
+        polyline.setWidth(strokeWidth);
     }
 
     private boolean fileWrite(String data, String filename) {

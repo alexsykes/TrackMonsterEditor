@@ -224,9 +224,9 @@ public class MainActivity extends AppCompatActivity
         // Check for zero = no current track
         trackid = trackDbHelper.getCurrentTrackID();
         if (trackid == 0) {
-            statusText = statusText + "No track selected";
+            statusText = "No track selected";
         }        // Set up FAB menu
-        statusTextView.setText(statusText);
+        // statusTextView.setText(statusText);
         populateTrackList();
     }
 
