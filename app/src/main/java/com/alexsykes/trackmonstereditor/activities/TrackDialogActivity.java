@@ -53,10 +53,12 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
     private static final int POLYGON_STROKE_WIDTH_PX = 8;
     private static final int PATTERN_DASH_LENGTH_PX = 30;
     private static final int PATTERN_GAP_LENGTH_PX = 30;
+    private static final int PATTERN_DOT_SPACING_PX = 10;
     private static final PatternItem DASH = new Dash(PATTERN_DASH_LENGTH_PX);
     private static final PatternItem GAP = new Gap(PATTERN_GAP_LENGTH_PX);
+    private static final PatternItem GAP_SPACING = new Gap(PATTERN_DOT_SPACING_PX);
     private static final PatternItem DOT = new Dot();
-    private static final List<PatternItem> PATTERN_POLYLINE_DOTTED = Arrays.asList(GAP, DOT);
+    private static final List<PatternItem> PATTERN_POLYLINE_DOTTED = Arrays.asList(GAP_SPACING, DOT);
     private static final List<PatternItem> PATTERN_POLYLINE_DASHED = Arrays.asList(GAP, DASH);
     private List<PatternItem> patternItemList;
 
@@ -264,50 +266,32 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
 
     private void displayTrack() {
 
-        int strokeWidth = 4;
-        int strokeColour = getResources().getColor(R.color.COLOR_DARK_GREEN_ARGB);
 
         LatLngBounds latLngBounds = trackData.getLatLngBounds();
         ArrayList<LatLng> latLngs = trackData.getLatLngs();
         // Create polyline options with existing LatLng ArrayList
         polylineOptions.addAll(latLngs);
-
-        polyline = map.addPolyline(polylineOptions);
-
-        switch (style) {
-            case "Undefined":
-                strokeColour = getResources().getColor(R.color.COLOR_UNDEFINED_ARGB);
-                break;
-            case "Track":
-                strokeColour = getResources().getColor(R.color.COLOR_TRACK_ARGB);
-                strokeWidth = 6;
-                break;
-            case "Road":
-                strokeColour = getResources().getColor(R.color.COLOR_ROAD_ARGB);
-                break;
-            case "Major road":
-                strokeColour = getResources().getColor(R.color.COLOR_MAJOR_ARGB);
-                strokeWidth = 6;
-                break;
-        }
-        polyline.setColor(strokeColour);
-        polyline.setWidth(strokeWidth);
+        updateTrack();
 
         map.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 1000, 1000, 3));
     }
 
     private void updateTrack() {
         map.clear();
+        polyline = map.addPolyline(polylineOptions);
+
         int strokeWidth = 4;
         int strokeColour = Color.BLACK;
-
-        polyline = map.addPolyline(polylineOptions);
+        patternItemList = null;
         switch (style) {
             case "Undefined":
                 strokeColour = getResources().getColor(R.color.COLOR_UNDEFINED_ARGB);
+                strokeWidth = 6;
+                patternItemList = PATTERN_POLYLINE_DOTTED;
                 break;
             case "Track":
                 strokeColour = getResources().getColor(R.color.COLOR_TRACK_ARGB);
+                patternItemList = PATTERN_POLYLINE_DASHED;
                 strokeWidth = 6;
                 break;
             case "Road":
@@ -321,7 +305,6 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
         polyline.setColor(strokeColour);
         polyline.setWidth(strokeWidth);
         polyline.setPattern(patternItemList);
-
     }
 
     private boolean fileWrite(String data, String filename) {

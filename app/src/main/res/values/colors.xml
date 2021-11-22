@@ -14,8 +14,8 @@
     <color name="list_highlist">#D1C4E9</color>
     <color name="COLOR_RED_ARGB">#FF0000</color>
     <color name="COLOR_BLACK_ARGB">#000000</color>
-    <color name="COLOR_UNDEFINED_ARGB">#D18811</color>
-    <color name="COLOR_TRACK_ARGB">#EF6C00</color>
+    <color name="COLOR_UNDEFINED_ARGB">#000000</color>
+    <color name="COLOR_TRACK_ARGB">#333333</color>
     <color name="COLOR_ROAD_ARGB">#283593</color>
     <color name="COLOR_MAJOR_ARGB">#C62828</color>
 </resources>
