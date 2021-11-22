@@ -463,20 +463,21 @@ public class MainActivity extends AppCompatActivity
         // Create polyline options with existing LatLng ArrayList
         polylineOptions.addAll(latLngs);
 
+
         switch (style) {
             case "Undefined":
-                strokeColour = COLOR_LIGHT_GREEN_ARGB;
+                strokeColour = getResources().getColor(R.color.COLOR_UNDEFINED_ARGB);
                 break;
             case "Track":
-                strokeColour = COLOR_DARK_GREEN_ARGB;
-                strokeWidth = 10;
+                strokeColour = getResources().getColor(R.color.COLOR_TRACK_ARGB);
+                strokeWidth = 6;
                 break;
             case "Road":
-                strokeColour = COLOR_LIGHT_ORANGE_ARGB;
+                strokeColour = getResources().getColor(R.color.COLOR_ROAD_ARGB);
                 break;
             case "Major road":
-                strokeColour = COLOR_DARK_ORANGE_ARGB;
-                strokeWidth = 10;
+                strokeColour = getResources().getColor(R.color.COLOR_MAJOR_ARGB);
+                strokeWidth = 6;
                 break;
         }
         polylineOptions

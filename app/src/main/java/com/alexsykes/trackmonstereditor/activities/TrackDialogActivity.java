@@ -49,25 +49,25 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
     private static final int CREATE_FILE = 1;
     private static final int PICK_PDF_FILE = 2;
     private static final String TAG = "Info";
-    final int COLOR_DARK_GREEN_ARGB = 0xff388E3C;
-    final int COLOR_LIGHT_GREEN_ARGB = 0xff81C784;
-    final int COLOR_DARK_ORANGE_ARGB = 0xffF57F17;
-    final int COLOR_LIGHT_ORANGE_ARGB = 0xffF9A825;
 
     private static final int POLYGON_STROKE_WIDTH_PX = 8;
     private static final int PATTERN_DASH_LENGTH_PX = 30;
-    private static final int PATTERN_GAP_LENGTH_PX = 10;
+    private static final int PATTERN_GAP_LENGTH_PX = 30;
     private static final PatternItem DASH = new Dash(PATTERN_DASH_LENGTH_PX);
     private static final PatternItem GAP = new Gap(PATTERN_GAP_LENGTH_PX);
     private static final PatternItem DOT = new Dot();
     private static final List<PatternItem> PATTERN_POLYLINE_DOTTED = Arrays.asList(GAP, DOT);
     private static final List<PatternItem> PATTERN_POLYLINE_DASHED = Arrays.asList(GAP, DASH);
+    private List<PatternItem> patternItemList;
+
+
+
     // Create a stroke pattern of a gap followed by a dash.
     private static final List<PatternItem> PATTERN_POLYGON_ALPHA = Arrays.asList(GAP, DASH);
+
     // Create a stroke pattern of a dot followed by a gap, a dash, and another gap.
     private static final List<PatternItem> PATTERN_POLYGON_BETA =
             Arrays.asList(DOT, GAP, DASH, GAP);
-    private List<PatternItem> patternItemList;
 
 
     File exportDir = new File(Environment.getExternalStoragePublicDirectory("Documents/Scoremonster"), "");
@@ -265,7 +265,7 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
     private void displayTrack() {
 
         int strokeWidth = 4;
-        int strokeColour = COLOR_DARK_GREEN_ARGB;
+        int strokeColour = getResources().getColor(R.color.COLOR_DARK_GREEN_ARGB);
 
         LatLngBounds latLngBounds = trackData.getLatLngBounds();
         ArrayList<LatLng> latLngs = trackData.getLatLngs();
@@ -273,19 +273,20 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
         polylineOptions.addAll(latLngs);
 
         polyline = map.addPolyline(polylineOptions);
+
         switch (style) {
             case "Undefined":
-                strokeColour = COLOR_LIGHT_GREEN_ARGB;
+                strokeColour = getResources().getColor(R.color.COLOR_UNDEFINED_ARGB);
                 break;
             case "Track":
-                strokeColour = COLOR_DARK_GREEN_ARGB;
+                strokeColour = getResources().getColor(R.color.COLOR_TRACK_ARGB);
                 strokeWidth = 6;
                 break;
             case "Road":
-                strokeColour = COLOR_LIGHT_ORANGE_ARGB;
+                strokeColour = getResources().getColor(R.color.COLOR_ROAD_ARGB);
                 break;
             case "Major road":
-                strokeColour = COLOR_DARK_ORANGE_ARGB;
+                strokeColour = getResources().getColor(R.color.COLOR_MAJOR_ARGB);
                 strokeWidth = 6;
                 break;
         }
@@ -298,28 +299,23 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
     private void updateTrack() {
         map.clear();
         int strokeWidth = 4;
-        int strokeColour = COLOR_DARK_GREEN_ARGB;
+        int strokeColour = Color.BLACK;
 
         polyline = map.addPolyline(polylineOptions);
         switch (style) {
             case "Undefined":
-                strokeColour = Color.BLACK;
-                strokeWidth = 6;
-                patternItemList = PATTERN_POLYLINE_DOTTED;
+                strokeColour = getResources().getColor(R.color.COLOR_UNDEFINED_ARGB);
                 break;
             case "Track":
-                strokeColour = Color.BLACK;
-                patternItemList = PATTERN_POLYLINE_DASHED;
+                strokeColour = getResources().getColor(R.color.COLOR_TRACK_ARGB);
                 strokeWidth = 6;
                 break;
             case "Road":
-                strokeColour = COLOR_LIGHT_ORANGE_ARGB;
-                patternItemList = null;
+                strokeColour = getResources().getColor(R.color.COLOR_ROAD_ARGB);
                 break;
             case "Major road":
-                strokeColour = COLOR_DARK_ORANGE_ARGB;
+                strokeColour = getResources().getColor(R.color.COLOR_MAJOR_ARGB);
                 strokeWidth = 6;
-                patternItemList = null;
                 break;
         }
         polyline.setColor(strokeColour);
