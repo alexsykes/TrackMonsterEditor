@@ -3,6 +3,7 @@ package com.alexsykes.trackmonstereditor.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -26,8 +27,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.Dash;
+import com.google.android.gms.maps.model.Dot;
+import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.textfield.TextInputLayout;
@@ -36,6 +41,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class TrackDialogActivity extends AppCompatActivity implements OnMapReadyCallback {
     // Request code for creating a PDF document.
@@ -46,6 +53,23 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
     final int COLOR_LIGHT_GREEN_ARGB = 0xff81C784;
     final int COLOR_DARK_ORANGE_ARGB = 0xffF57F17;
     final int COLOR_LIGHT_ORANGE_ARGB = 0xffF9A825;
+
+    private static final int POLYGON_STROKE_WIDTH_PX = 8;
+    private static final int PATTERN_DASH_LENGTH_PX = 30;
+    private static final int PATTERN_GAP_LENGTH_PX = 10;
+    private static final PatternItem DASH = new Dash(PATTERN_DASH_LENGTH_PX);
+    private static final PatternItem GAP = new Gap(PATTERN_GAP_LENGTH_PX);
+    private static final PatternItem DOT = new Dot();
+    private static final List<PatternItem> PATTERN_POLYLINE_DOTTED = Arrays.asList(GAP, DOT);
+    private static final List<PatternItem> PATTERN_POLYLINE_DASHED = Arrays.asList(GAP, DASH);
+    // Create a stroke pattern of a gap followed by a dash.
+    private static final List<PatternItem> PATTERN_POLYGON_ALPHA = Arrays.asList(GAP, DASH);
+    // Create a stroke pattern of a dot followed by a gap, a dash, and another gap.
+    private static final List<PatternItem> PATTERN_POLYGON_BETA =
+            Arrays.asList(DOT, GAP, DASH, GAP);
+    private List<PatternItem> patternItemList;
+
+
     File exportDir = new File(Environment.getExternalStoragePublicDirectory("Documents/Scoremonster"), "");
     TextInputLayout nameTextInputLayout;
     TextInputLayout descriptionTextInputLayout;
@@ -279,22 +303,29 @@ public class TrackDialogActivity extends AppCompatActivity implements OnMapReady
         polyline = map.addPolyline(polylineOptions);
         switch (style) {
             case "Undefined":
-                strokeColour = COLOR_LIGHT_GREEN_ARGB;
+                strokeColour = Color.BLACK;
+                strokeWidth = 6;
+                patternItemList = PATTERN_POLYLINE_DOTTED;
                 break;
             case "Track":
-                strokeColour = COLOR_DARK_GREEN_ARGB;
+                strokeColour = Color.BLACK;
+                patternItemList = PATTERN_POLYLINE_DASHED;
                 strokeWidth = 6;
                 break;
             case "Road":
                 strokeColour = COLOR_LIGHT_ORANGE_ARGB;
+                patternItemList = null;
                 break;
             case "Major road":
                 strokeColour = COLOR_DARK_ORANGE_ARGB;
                 strokeWidth = 6;
+                patternItemList = null;
                 break;
         }
         polyline.setColor(strokeColour);
         polyline.setWidth(strokeWidth);
+        polyline.setPattern(patternItemList);
+
     }
 
     private boolean fileWrite(String data, String filename) {
